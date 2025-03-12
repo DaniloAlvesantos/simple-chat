@@ -5,4 +5,5 @@ export type MessageType = {
   avatarUrl: string;
   text: string;
   uid: string;
+  name:string;
 };

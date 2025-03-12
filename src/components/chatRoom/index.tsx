@@ -14,27 +14,35 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { Header } from "../header";
 import { MessageType } from "@/types/messages";
 import { ChatMessage } from "../chatMessage";
+import { Loading } from "../loading";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 export function ChatRoom() {
   const { db } = useStoreContext();
   const messagesRef = collection(db, "messages");
   const messageQuery = query(messagesRef, orderBy("createdAt"), limit(25));
-  const [messages] = useCollectionData<MessageType>(
+  const [messages, loading] = useCollectionData<MessageType>(
     messageQuery as Query<MessageType>
   );
+  const [parent] = useAutoAnimate();
 
   return (
     <>
       <Header />
       <section className="flex flex-col gap-4 w-full p-8">
-        <main className="pb-6">
-          {messages?.length ? (
-            messages.map((message) => (
-              <ChatMessage key={message.uid} message={message} />
-            ))
-          ) : (
-            <EmptyMessages />
-          )}
+        <main>
+          <div ref={parent}>
+            {messages?.length ? (
+              messages.map((message) => (
+                <ChatMessage
+                  key={message.uid + message.createdAt}
+                  message={message}
+                />
+              ))
+            ) : (
+              <EmptyMessages />
+            )}
+          </div>
         </main>
 
         <TextMessageArea />
@@ -59,6 +67,7 @@ const TextMessageArea = () => {
       text: inputRef.current.value,
       createdAt: Timestamp.now(),
       uid: auth.currentUser.uid,
+      name: auth.currentUser.displayName!,
     };
 
     addDoc(collection(db, "messages"), data);

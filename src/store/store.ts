@@ -1,6 +1,6 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { deleteDoc, getFirestore, doc } from "firebase/firestore";
 import { create } from "zustand";
 
 const firebaseConfig = {
@@ -20,10 +20,16 @@ interface storeProps {
   app: FirebaseApp;
   auth: ReturnType<typeof getAuth>;
   db: ReturnType<typeof getFirestore>;
+  deleteMessage: (uid: string) => void;
 }
+
+const deleteMessage = (uid: string) => {
+  deleteDoc(doc(db, "messages", uid));
+};
 
 export const useStoreContext = create<storeProps>(() => ({
   app: firebaseApp,
   auth,
   db,
+  deleteMessage
 }));
