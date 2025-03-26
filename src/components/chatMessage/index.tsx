@@ -27,7 +27,7 @@ export const ChatMessage = (props: ChatMessageProps) => {
         className="aspect-square rounded-full size-12 object-cover"
         src={avatarUrl}
       />
-      <span
+      <span 
         className="bg-white/10 p-1.5 rounded relative"
         onDoubleClick={() => deleteMessage(uid)}
       >
